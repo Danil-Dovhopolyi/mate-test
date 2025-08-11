@@ -1,87 +1,281 @@
-# Huntd public
+# Huntd Test Assignment
 
-Anonymous job search in IT (public version).
+Anonymous job search in IT (test version for Mate academy candidates).
 
-## Setup environment
+## Prerequisites
 
-1. Setup environment as described in the [doc](./Setup.md)
+Before starting, ensure you have the required development environment set up based on your operating system.
 
-2. Clone repository:
-    ```bash
-   git clone git@github.com:mate-academy/huntd-test.git
+### Windows Users (WSL Required)
+
+For optimal Docker performance, Windows users must install WSL2:
+
+1. **Install WSL 2**
+   Follow the official guide: [Install WSL on Windows 10](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+   Verify WSL 2 installation:
+   ```powershell
+   wsl -l -v
    ```
-3. Setup local `.env` file
-  - Run `make init` to copy `.env.sample` -> `.env`
-  - Insert on the 4th line the NPM_TOKEN you were given
-4. Install dependencies (node modules) for primary services locally(make sure correct node version is used, check .nvmrc file):
-    ```bash
-    npm install # in root, ./frontend, ./api
-    ```
 
-## Run project
+   Use the **latest** Ubuntu image offered.
 
-To run the project run following command in the root directory (INSERT NPM TOKEN INTO MAKEFILE BEFORE RUNNING IT):
+2. **WSL Best Practices**
+   - Install all development tools (Git, Node.js, Docker) on the Linux filesystem
+   - Store project files on the Linux filesystem for maximum Docker performance
+   - Access your WSL filesystem from Windows at `\\wsl$\Ubuntu`
+
+### Node.js Installation (All Platforms)
+
+Install Node.js via nvm for version management:
+
+1. **Install nvm:**
+   - **Linux/macOS:** Follow instructions at [nvm repository](https://github.com/nvm-sh/nvm)
+   - **Windows (WSL):** Same as Linux instructions above
+
+2. **Install and use Node.js:**
+   ```bash
+   # Check .nvmrc file in project root for required version
+   nvm install
+   nvm use
+   ```
+
+### Docker Installation
+
+**macOS:**
+Install [Docker Desktop for Mac](https://docs.docker.com/desktop/install/mac-install/)
+
+**Windows:**
+1. Install [Docker Desktop for Windows](https://docs.docker.com/get-docker/)
+2. Configure Docker to use WSL 2 backend: [Docker Desktop WSL 2 backend](https://docs.docker.com/desktop/windows/wsl/)
+3. Enable WSL 2 integration in Docker Desktop settings
+
+**Linux:**
+Follow the [official Docker installation guide](https://docs.docker.com/get-docker/) for your distribution.
+
+## Project Setup
+
+### 1. Clone Repository
+
 ```bash
-  make up
+git clone git@github.com:mate-academy/huntd-test.git
+cd huntd-test
 ```
 
-After project has started up it should be accessible at `http://localhost:3000`
+### 2. NPM Token Setup
 
-Project contains following services combined in `docker compose`:
-- **API:**
-    - Codebase: './api'
-    - Graphql endpoint: `http://localhost:4000/graphql`
-    - Rest endpoint: `http://localhost:4000/rest`
+You'll receive a private NPM token from Mate academy. Configure it in three places:
 
-    Graphql is a primary endpoint to use. Rest api is needed only for services without graphql support (like receive a pingback from the oAuth provider).
+**Step 1: Local NPM configuration**
+- **Linux/macOS/WSL:** `~/.npmrc`
+- **Windows:** `C:/Users/<YourUsername>/.npmrc`
 
-    Useful guides to learn how graphql works in combination with ORM and UI:
-    - [Beginner GraphQL Series](https://www.youtube.com/watch?v=DyvsMKsEsyE&list=PLN3n1USn4xln0j_NN9k4j5hS1thsGibKi)
-    - [Typescript, Next.js and GraphQL Series](https://www.youtube.com/watch?v=kfmh2mMf3fs&list=PLN3n1USn4xlkDk8vPVtgyGG3_1eXYPrW-)
-    - [Slack Clone using GraphQL and React](https://www.youtube.com/watch?v=0MKJ7JbVnFc&list=PLN3n1USn4xlkdRlq3VZ1sT6SGW0-yajjL)
+Add this line to the file:
+```
+//registry.npmjs.org/:_authToken=YOUR_TOKEN_HERE
+```
 
-- **Frontend:**
-    - Codebase: './frontend'
-    - Homepage: `http://localhost:3000`
+Verify the token works:
+```bash
+npm whoami
+# Should return: mateacademy
+```
 
-    [NextJS](https://nextjs.org) is used for serving UI on Huntd. Complete official [guide](https://nextjs.org/learn) and read the [docs](https://nextjs.org/docs) to get familiar with NextJS features.
+**Step 2: Project environment**
+```bash
+# Copy environment template (.env.sample -> .env)
+make init
 
-- **CMS (Production only - not required for test assignment):**
-    - Codebase: './cms'
-    - Homepage: `https://local.hutnd.tech/admin`
+# Edit .env file (line 4) and add:
+NPM_TOKEN=YOUR_TOKEN_HERE
 
-  [Strapi](https://strapi.io) is used as a CMS on Huntd in production. This service is not included in the local development setup for the test assignment.
+# Edit Makefile (line 4) and replace:
+NPM_TOKEN ?= YOUR_TOKEN_HERE
+```
 
-- **NGINX:**
-    - Codebase: './nginx'
+### 3. Install Dependencies
 
-  Reverse proxy server. Read the [docs](https://nginx.org/en/docs) to get familiar with nginx features.
+Install packages for the main services (ensure correct Node.js version from .nvmrc):
+```bash
+npm install # in root directory
+cd frontend && npm install && cd ..
+cd api && npm install && cd ..
+```
 
-  **Follow guide from [Nginx readme](nginx/README.md) (Optional)** to setup SSL certificates locally
+## Running the Project
 
+### Start All Services
 
-- **DB:**
-    - Codebase: './db'
+```bash
+make up
+```
 
-  Local postgres database
+This starts all services via Docker Compose:
+- **Frontend:** http://localhost:3000
+- **API GraphQL:** http://localhost:4000/graphql
+- **API REST:** http://localhost:4000/rest
+- **Database:** PostgreSQL on port 5432
+- **Redis:** Port 6379
 
-- **Redis:**
+### Verify Setup
 
-  Huntd uses Redis as a PubSub server. Read the [docs](https://redis.io/documentation) to get familiar with Redis features.
+After startup, access the project at: **http://localhost:3000**
 
-  In production Huntd project uses AWS Redis.
+## SSL Certificate Setup (Optional)
 
-**Makefile** is useful for running project locally. Most of the time developers use following commands:
-- `make` or `make up` - start project
-- `make down` - stop project
-- `make rebuild-hard s=<service>` - rebuild image. Useful after installing new packages/dependencies.
-- `make test s=<service>` - run tests
-- `make db-development` - connect to database
-- `make clean` - clean docker resources. Useful when message `No space left on the device` appeared.
+The test assignment mentions SSL setup. This section provides complete instructions.
 
-## Daily workflow advices:
-- Rebuild service every time when new dependency added. The `node_modules` folder is not synced to the docker container for performance purposes, so the only way to get dependencies in the container is running the "rebuild" command.
-  ```bash
-    make rebuild-hard s=<service>
-  ```
-- Keep local `.env` in sync with `.env.sample`.
+### 1. Modify Hosts File
+
+**macOS/Linux:**
+```bash
+sudo vi /etc/hosts
+```
+
+**Windows:**
+Open `C:\Windows\System32\drivers\etc\hosts` in text editor (Run as Administrator)
+
+Add this line:
+```
+127.0.0.1       local.huntd.tech
+```
+
+### 2. SSL Certificate Configuration
+
+SSL certificates are pre-generated and stored in `local-ssl/` directory. To access via HTTPS:
+
+1. **Update environment variables in `.env`:**
+   ```
+   API_SSL=true
+   API_HOST_PUBLIC=local.huntd.tech
+   ```
+
+2. **Trust the certificate:**
+   - First, visit https://local.huntd.tech to download the certificate ([learn how](https://medium.com/@menakajain/export-download-ssl-certificate-from-server-site-url-bcfc41ea46a2))
+   - Then add certificate to trusted:
+     - **macOS:** [Add to Keychain](https://tosbourn.com/getting-os-x-to-trust-self-signed-ssl-certificates/)
+     - **Windows:** [Install certificate](https://community.spiceworks.com/how_to/1839-installing-self-signed-ca-certificate-in-windows)
+
+3. **Access via HTTPS:** https://local.huntd.tech
+
+## Project Architecture
+
+The application consists of these services:
+
+### API
+- **Codebase:** `./api`
+- **GraphQL endpoint:** http://localhost:4000/graphql (primary)
+- **REST endpoint:** http://localhost:4000/rest (OAuth callbacks only)
+- **Technology:** Node.js, TypeScript, Sequelize, Apollo GraphQL
+
+Useful GraphQL learning resources:
+- [Beginner GraphQL Series](https://www.youtube.com/watch?v=DyvsMKsEsyE&list=PLN3n1USn4xln0j_NN9k4j5hS1thsGibKi)
+- [TypeScript, Next.js and GraphQL Series](https://www.youtube.com/watch?v=kfmh2mMf3fs&list=PLN3n1USn4xlkDk8vPVtgyGG3_1eXYPrW-)
+
+### Frontend
+- **Codebase:** `./frontend`
+- **Homepage:** http://localhost:3000
+- **Technology:** Next.js, React, TypeScript, Apollo Client, SCSS
+
+Learn more: [Next.js Documentation](https://nextjs.org/docs)
+
+### CMS (Production only - not required for test assignment)
+- **Codebase:** `./cms`
+- **Technology:** Strapi CMS
+- **Note:** Not included in local development setup for simplified testing
+
+### Database
+- **Technology:** PostgreSQL 10.21
+- **Port:** 5432
+- **Credentials:** user: `dev`, password: `772184`, database: `huntd_development`
+
+### Redis
+- **Port:** 6379
+- **Usage:** PubSub server for real-time features
+
+### Nginx
+- **Codebase:** `./nginx`
+- **Purpose:** Reverse proxy, SSL termination
+- **Configuration:** nginx.local.conf (for development)
+
+## Development Commands
+
+### Makefile Commands
+
+```bash
+# Start project
+make up
+
+# Stop project
+make down
+
+# Rebuild service after adding dependencies
+make rebuild-hard s=<service>
+
+# Run tests
+make test s=<service>
+
+# Connect to database
+make db-development
+
+# Clean Docker resources (when "No space left" error)
+make clean
+
+# Access service containers
+make api    # Access API container
+make front  # Access Frontend container
+```
+
+### Daily Workflow
+
+1. **Adding dependencies:** Always rebuild the service container after adding packages:
+   ```bash
+   make rebuild-hard s=api        # After adding API dependencies
+   make rebuild-hard s=frontend   # After adding Frontend dependencies
+   ```
+
+2. **Database changes:** **Important: Only run migrations inside the Docker container, never from outside.**
+   ```bash
+   make api
+   npx sequelize db:migrate
+   ```
+
+## Troubleshooting
+
+### Docker Issues on Windows
+
+If you encounter database connection issues:
+1. Ensure WSL 2 is properly installed and configured
+2. Verify Docker Desktop is using WSL 2 backend
+3. Check that project files are stored on WSL filesystem (not Windows)
+4. In API configuration, ensure database host is set correctly (usually `db` in Docker Compose)
+
+### NPM Token Issues
+
+If you see 404 errors for mate-academy packages:
+1. Verify `npm whoami` returns `mateacademy`
+2. Check token is correctly set in all three locations: `~/.npmrc`, `.env`, and `Makefile`
+3. Ensure token doesn't have extra spaces or characters
+
+### Performance Issues
+
+If the project runs slowly:
+1. **Windows:** Ensure you're using WSL 2 and files are on Linux filesystem
+2. **macOS:** Close unnecessary applications to free up memory
+3. **All platforms:** Run `make clean` to free up Docker resources ⚠️ **Warning: This removes ALL Docker images and volumes system-wide, not just this project**
+
+### Port Conflicts
+
+If ports are already in use:
+```bash
+# Check what's using the ports
+lsof -i :3000
+lsof -i :4000
+lsof -i :5432
+
+# Stop conflicting processes or modify docker-compose.yml ports
+```
+
+---
+
+**Ready to start coding!** 🚀 The project should now be running at http://localhost:3000

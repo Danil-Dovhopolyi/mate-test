@@ -24,10 +24,10 @@ SSL certificates can be placed in ./local-ssl if needed for advanced configurati
     open `C:\Windows\System32\drivers\etc\hosts` in text editor
 
 - add `local.huntd.tech` near `127.0.0.1`.
-    ```nashorn js
+    ```
     127.0.0.1       localhost
     127.0.0.1       localunixsocket.local
-    + 127.0.0.1     local.huntd.tech
+    127.0.0.1       local.huntd.tech
     ```
 
 ## Add certificate to trusted
