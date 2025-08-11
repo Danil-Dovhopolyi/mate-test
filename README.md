@@ -1,6 +1,6 @@
 # Huntd Test Assignment
 
-Anonymous job search in IT (test version for Mate Academy candidates).
+Anonymous job search in IT (test version for Mate academy candidates).
 
 ## Prerequisites
 
@@ -64,7 +64,7 @@ cd huntd-test
 
 ### 2. NPM Token Setup
 
-You'll receive a private NPM token from Mate Academy. Configure it in three places:
+You'll receive a private NPM token from Mate academy. Configure it in three places:
 
 **Step 1: Local NPM configuration**
 - **Linux/macOS/WSL:** `~/.npmrc`
