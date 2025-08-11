@@ -68,7 +68,7 @@ You'll receive a private NPM token from Mate academy. Configure it in three plac
 
 **Step 1: Local NPM configuration**
 - **Linux/macOS/WSL:** `~/.npmrc`
-- **Windows:** `C:\Users\<YourUsername>\.npmrc`
+- **Windows:** `C:/Users/<YourUsername>/.npmrc`
 
 Add this line to the file:
 ```
@@ -142,7 +142,7 @@ Add this line:
 
 ### 2. SSL Certificate Configuration
 
-SSL certificates are automatically generated. To access via HTTPS:
+SSL certificates are pre-generated and stored in `local-ssl/` directory. To access via HTTPS:
 
 1. **Update environment variables in `.env`:**
    ```
@@ -151,8 +151,10 @@ SSL certificates are automatically generated. To access via HTTPS:
    ```
 
 2. **Trust the certificate:**
-   - **macOS:** [Add to Keychain](https://tosbourn.com/getting-os-x-to-trust-self-signed-ssl-certificates/)
-   - **Windows:** [Install certificate](https://community.spiceworks.com/how_to/1839-installing-self-signed-ca-certificate-in-windows)
+   - First, visit https://local.huntd.tech to download the certificate ([learn how](https://medium.com/@menakajain/export-download-ssl-certificate-from-server-site-url-bcfc41ea46a2))
+   - Then add certificate to trusted:
+     - **macOS:** [Add to Keychain](https://tosbourn.com/getting-os-x-to-trust-self-signed-ssl-certificates/)
+     - **Windows:** [Install certificate](https://community.spiceworks.com/how_to/1839-installing-self-signed-ca-certificate-in-windows)
 
 3. **Access via HTTPS:** https://local.huntd.tech
 
@@ -232,7 +234,7 @@ make front  # Access Frontend container
    make rebuild-hard s=frontend   # After adding Frontend dependencies
    ```
 
-2. **Database changes:** Run migrations inside the API container:
+2. **Database changes:** **Important: Only run migrations inside the Docker container, never from outside.**
    ```bash
    make api
    npx sequelize db:migrate
