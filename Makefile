@@ -63,13 +63,13 @@ db-development:
 	psql --host=localhost --port=5432 --username=dev --password --dbname=huntd_development
 
 api:
-	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-public-api-1 bash
+	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-test-api-1 bash
 
 cms:
-	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-public-cms-1 bash
+	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-test-cms-1 bash
 
 front:
-	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-public-frontend-1 sh
+	TAG=$(TAG) APP_ENV=$(APP_ENV) docker exec -it huntd-test-frontend-1 sh
 
 init:
 	cp ./.env.sample ./.env
