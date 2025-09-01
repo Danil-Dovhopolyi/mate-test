@@ -1,9 +1,12 @@
 import { GraphQLClient } from 'graphql-request';
 import { print } from 'graphql';
 import { GraphQLError } from 'graphql-request/dist/types';
+import { Headers } from 'graphql-request/dist/types.dom';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -23,10 +26,203 @@ export type AdminSettings = {
   silentProfileUpdate: Scalars['Boolean'];
 };
 
-export type UpdateAdminSettingsValues = {
-  contactsVisibilityPermission: Scalars['Boolean'];
-  silentProfileUpdate: Scalars['Boolean'];
+export type CandidateProfile = {
+  __typename?: 'CandidateProfile';
+  id: Scalars['Int'];
+  userId: Scalars['Int'];
+  slug?: Maybe<Scalars['String']>;
+  status: CandidateProfileStatus;
+  rejectReason?: Maybe<Scalars['String']>;
+  position?: Maybe<Scalars['String']>;
+  salary?: Maybe<Scalars['Float']>;
+  candidateDescription?: Maybe<Scalars['String']>;
+  experienceDescription?: Maybe<Scalars['String']>;
+  workExpectations?: Maybe<Scalars['String']>;
+  achievements?: Maybe<Scalars['String']>;
+  specializations?: Maybe<Array<Specialization>>;
+  technologies?: Maybe<Array<Technology>>;
+  employmentTypes?: Maybe<Array<EmploymentType>>;
+  employmentLocations?: Maybe<Array<EmploymentLocation>>;
+  englishLevel?: Maybe<EnglishLevel>;
+  jobExperience?: Maybe<JobExperience>;
+  specialization?: Maybe<Specialization>;
+  user?: Maybe<User>;
+  cities?: Maybe<Array<CandidateProfileCity>>;
+  workPlaces?: Maybe<Array<CandidateProfileWorkPlace>>;
+  lastActionTime?: Maybe<Scalars['GraphQLDateTime']>;
+  connectionsCount?: Maybe<Scalars['Int']>;
 };
+
+export type CandidateProfileCity = {
+  __typename?: 'CandidateProfileCity';
+  id: Scalars['Int'];
+  cityId: Scalars['String'];
+  cityName: Scalars['String'];
+  cityTimezone?: Maybe<Scalars['Int']>;
+  cityCountrySlug?: Maybe<Scalars['String']>;
+  cityCountryName?: Maybe<Scalars['String']>;
+  type: CityTypes;
+};
+
+export type CandidateProfileCityInput = {
+  cityId: Scalars['String'];
+  cityName: Scalars['String'];
+  cityTimezone?: Maybe<Scalars['Int']>;
+  cityCountrySlug?: Maybe<Scalars['String']>;
+  cityCountryName?: Maybe<Scalars['String']>;
+  type?: Maybe<CityTypes>;
+};
+
+export enum CandidateProfileStatus {
+  Draft = 'DRAFT',
+  OnReview = 'ON_REVIEW',
+  Rejected = 'REJECTED',
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
+export type CandidateProfileWorkPlace = {
+  __typename?: 'CandidateProfileWorkPlace';
+  id: Scalars['Int'];
+  companyName: Scalars['String'];
+  companyUrl?: Maybe<Scalars['String']>;
+  companySizeFrom?: Maybe<Scalars['Int']>;
+  companySizeTo?: Maybe<Scalars['Int']>;
+  companyIndustry?: Maybe<Scalars['String']>;
+  companyCategories?: Maybe<Scalars['String']>;
+  companySpecialities?: Maybe<Scalars['String']>;
+  companyFundingType?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  startDate: Scalars['GraphQLDateTime'];
+  endDate?: Maybe<Scalars['GraphQLDateTime']>;
+};
+
+export type CandidateProfileWorkPlaceInput = {
+  companyName: Scalars['String'];
+  companyUrl?: Maybe<Scalars['String']>;
+  companySizeFrom?: Maybe<Scalars['Int']>;
+  companySizeTo?: Maybe<Scalars['Int']>;
+  companyIndustry?: Maybe<Scalars['String']>;
+  companyCategories?: Maybe<Scalars['String']>;
+  companySpecialities?: Maybe<Scalars['String']>;
+  companyFundingType?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  startDate: Scalars['GraphQLDateTime'];
+  endDate?: Maybe<Scalars['GraphQLDateTime']>;
+};
+
+export type CandidatesSearchParams = {
+  __typename?: 'CandidatesSearchParams';
+  cities?: Maybe<Array<Scalars['String']>>;
+  countries?: Maybe<Array<Scalars['String']>>;
+  specializations?: Maybe<Array<Scalars['String']>>;
+  salaryFrom?: Maybe<Scalars['Int']>;
+  salaryTo?: Maybe<Scalars['Int']>;
+  timezoneFrom?: Maybe<Scalars['Int']>;
+  timezoneTo?: Maybe<Scalars['Int']>;
+  timezoneReverseMode?: Maybe<Scalars['Boolean']>;
+  searchQuery?: Maybe<Scalars['String']>;
+  experienceIds?: Maybe<Array<Scalars['Int']>>;
+  englishLevelIds?: Maybe<Array<Scalars['Int']>>;
+  employmentTypesIds?: Maybe<Array<Scalars['Int']>>;
+  technologiesIds?: Maybe<Array<Scalars['Int']>>;
+};
+
+export type ChatMessage = {
+  __typename?: 'ChatMessage';
+  id: Scalars['Int'];
+  message?: Maybe<Scalars['String']>;
+  senderUser?: Maybe<User>;
+  recipientUser?: Maybe<User>;
+  profileConnectionId: Scalars['Int'];
+  isSystemMessage?: Maybe<Scalars['Boolean']>;
+  createdAt: Scalars['GraphQLDateTime'];
+  updatedAt: Scalars['GraphQLDateTime'];
+};
+
+export type ChurnedUser = {
+  __typename?: 'ChurnedUser';
+  id: Scalars['Int'];
+  firstName?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  profilesCount: Scalars['Int'];
+  profileId: Scalars['Int'];
+  slug?: Maybe<Scalars['String']>;
+  profileCreatedAt: Scalars['GraphQLDateTime'];
+};
+
+export enum CityTypes {
+  CandidateCity = 'CANDIDATE_CITY',
+  OfficeCity = 'OFFICE_CITY'
+}
+
+export type CreateMultipleVacanciesSourcesParameters = {
+  atsIds: Scalars['String'];
+  companyNames: Scalars['String'];
+  salaryRanges: Scalars['String'];
+  type: VacancySourceType;
+};
+
+export enum DevicePlatform {
+  Ios = 'IOS',
+  Android = 'ANDROID'
+}
+
+export type DeviceToken = {
+  __typename?: 'DeviceToken';
+  id: Scalars['Int'];
+  userId: Scalars['Int'];
+  token: Scalars['String'];
+  devicePlatform: DevicePlatform;
+  deviceYear?: Maybe<Scalars['String']>;
+  systemVersion?: Maybe<Scalars['String']>;
+  deviceName?: Maybe<Scalars['String']>;
+};
+
+export type EmploymentLocation = {
+  __typename?: 'EmploymentLocation';
+  id: Scalars['Int'];
+  slug: Scalars['String'];
+};
+
+export type EmploymentType = {
+  __typename?: 'EmploymentType';
+  id: Scalars['Int'];
+  slug: Scalars['String'];
+};
+
+export type EnglishLevel = {
+  __typename?: 'EnglishLevel';
+  id: Scalars['Int'];
+  slug: Scalars['String'];
+};
+
+export type Feature = {
+  __typename?: 'Feature';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  status: FeatureStatus;
+};
+
+export enum FeatureStatus {
+  Enabled = 'ENABLED',
+  Disabled = 'DISABLED'
+}
+
+
+export type JobExperience = {
+  __typename?: 'JobExperience';
+  id: Scalars['Int'];
+  slug: Scalars['String'];
+};
+
+export enum MessageUserRole {
+  Sender = 'SENDER',
+  Recipient = 'RECIPIENT',
+  NotDefined = 'NOT_DEFINED'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -168,6 +364,7 @@ export type MutationCreateRecruiterProfileArgs = {
   userId: Scalars['Int'];
   position: Scalars['String'];
   companyName: Scalars['String'];
+  city?: Maybe<Scalars['String']>;
 };
 
 
@@ -545,6 +742,7 @@ export type MutationUpdateProfileContactsArgs = {
 export type MutationUpdateRecruiterProfileArgs = {
   position?: Maybe<Scalars['String']>;
   companyName?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
 };
 
 
@@ -604,13 +802,111 @@ export type MutationUploadCvFileArgs = {
   size?: Maybe<Scalars['Int']>;
 };
 
-export type Subscription = {
-  __typename?: 'Subscription';
-  candidateProfileStatusUpdated: CandidateProfile;
-  newMessage?: Maybe<ChatMessage>;
-  profileConnectionUpdated: ProfileConnection;
-  recruiterProfileStatusUpdated: RecruiterProfile;
-  userUnreadMessagesCountUpdated?: Maybe<User>;
+export type Nft = {
+  __typename?: 'Nft';
+  id: Scalars['Int'];
+  openseaUrl: Scalars['String'];
+  userId?: Maybe<Scalars['Int']>;
+  entity: UploadedFile;
+};
+
+export enum NotificationChannel {
+  Push = 'PUSH'
+}
+
+export enum OAuthProviders {
+  Github = 'GITHUB',
+  Google = 'GOOGLE',
+  Linkedin = 'LINKEDIN',
+  Apple = 'APPLE'
+}
+
+export type OAuthToken = {
+  __typename?: 'OAuthToken';
+  id: Scalars['Int'];
+  providerName: Scalars['String'];
+  providerId: Scalars['String'];
+  token: Scalars['String'];
+};
+
+export enum OfferStatus {
+  Offer = 'OFFER',
+  NoOffer = 'NO_OFFER'
+}
+
+export enum PrimaryProfile {
+  Recruiter = 'RECRUITER',
+  Candidate = 'CANDIDATE',
+  NotDefined = 'NOT_DEFINED'
+}
+
+export type ProfileConnection = {
+  __typename?: 'ProfileConnection';
+  id: Scalars['Int'];
+  candidateUser?: Maybe<User>;
+  recruiterUser: User;
+  candidateProfile: CandidateProfile;
+  recruiterProfile: RecruiterProfile;
+  initiator: ProfileConnectionInitiator;
+  status: ProfileConnectionStatus;
+  chatMessages?: Maybe<Array<ChatMessage>>;
+  candidateReportedStatus?: Maybe<OfferStatus>;
+  recruiterReportedStatus?: Maybe<OfferStatus>;
+  userMeta?: Maybe<ProfileConnectionUserMeta>;
+  buddyMeta?: Maybe<ProfileConnectionUserMeta>;
+  candidateReportedAt?: Maybe<Scalars['GraphQLDateTime']>;
+  recruiterReportedAt?: Maybe<Scalars['GraphQLDateTime']>;
+  unreadMessagesCount?: Maybe<Scalars['Int']>;
+  paidAt?: Maybe<Scalars['GraphQLDateTime']>;
+  isPaymentRequested: Scalars['Boolean'];
+};
+
+export enum ProfileConnectionInitiator {
+  Candidate = 'CANDIDATE',
+  Recruiter = 'RECRUITER'
+}
+
+export enum ProfileConnectionStatus {
+  Pending = 'PENDING',
+  Approved = 'APPROVED',
+  Rejected = 'REJECTED'
+}
+
+export type ProfileConnectionUserMeta = {
+  __typename?: 'ProfileConnectionUserMeta';
+  id: Scalars['Int'];
+  lastActionTime?: Maybe<Scalars['GraphQLDateTime']>;
+  archivedAt?: Maybe<Scalars['GraphQLDateTime']>;
+};
+
+export type PublicCandidateProfilesResult = {
+  __typename?: 'PublicCandidateProfilesResult';
+  rows: Array<CandidateProfile>;
+  hasMore: Scalars['Boolean'];
+  count: Scalars['Int'];
+};
+
+export type PublicProfilesOptions = {
+  offset?: Maybe<Scalars['Int']>;
+  username?: Maybe<Scalars['String']>;
+  forceRealList?: Maybe<Scalars['Boolean']>;
+};
+
+export type PublicProfilesParameters = {
+  cities?: Maybe<Array<Scalars['String']>>;
+  countries?: Maybe<Array<Scalars['String']>>;
+  locations?: Maybe<Array<Scalars['String']>>;
+  specializations?: Maybe<Array<Scalars['String']>>;
+  salaryFrom?: Maybe<Scalars['Int']>;
+  salaryTo?: Maybe<Scalars['Int']>;
+  timezoneFrom?: Maybe<Scalars['Int']>;
+  timezoneTo?: Maybe<Scalars['Int']>;
+  searchQuery?: Maybe<Scalars['String']>;
+  experienceIds?: Maybe<Array<Scalars['Int']>>;
+  englishLevelIds?: Maybe<Array<Scalars['Int']>>;
+  employmentTypesIds?: Maybe<Array<Scalars['Int']>>;
+  technologiesIds?: Maybe<Array<Scalars['Int']>>;
+  timezoneReverseMode?: Maybe<Scalars['Boolean']>;
 };
 
 export type Query = {
@@ -742,250 +1038,6 @@ export type QueryVacanciesByCompanyArgs = {
   options?: Maybe<VacanciesByCompanyParameters>;
 };
 
-export type PublicCandidateProfilesResult = {
-  __typename?: 'PublicCandidateProfilesResult';
-  rows: Array<CandidateProfile>;
-  hasMore: Scalars['Boolean'];
-  count: Scalars['Int'];
-};
-
-export enum CandidateProfileStatus {
-  Draft = 'DRAFT',
-  OnReview = 'ON_REVIEW',
-  Rejected = 'REJECTED',
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
-}
-
-export type CandidateProfile = {
-  __typename?: 'CandidateProfile';
-  id: Scalars['Int'];
-  userId: Scalars['Int'];
-  slug?: Maybe<Scalars['String']>;
-  status: CandidateProfileStatus;
-  rejectReason?: Maybe<Scalars['String']>;
-  position?: Maybe<Scalars['String']>;
-  salary?: Maybe<Scalars['Float']>;
-  candidateDescription?: Maybe<Scalars['String']>;
-  experienceDescription?: Maybe<Scalars['String']>;
-  workExpectations?: Maybe<Scalars['String']>;
-  achievements?: Maybe<Scalars['String']>;
-  specializations?: Maybe<Array<Specialization>>;
-  technologies?: Maybe<Array<Technology>>;
-  employmentTypes?: Maybe<Array<EmploymentType>>;
-  employmentLocations?: Maybe<Array<EmploymentLocation>>;
-  englishLevel?: Maybe<EnglishLevel>;
-  jobExperience?: Maybe<JobExperience>;
-  specialization?: Maybe<Specialization>;
-  user?: Maybe<User>;
-  cities?: Maybe<Array<CandidateProfileCity>>;
-  workPlaces?: Maybe<Array<CandidateProfileWorkPlace>>;
-  lastActionTime?: Maybe<Scalars['GraphQLDateTime']>;
-  connectionsCount?: Maybe<Scalars['Int']>;
-};
-
-export type PublicProfilesOptions = {
-  offset?: Maybe<Scalars['Int']>;
-  username?: Maybe<Scalars['String']>;
-  forceRealList?: Maybe<Scalars['Boolean']>;
-};
-
-export type PublicProfilesParameters = {
-  cities?: Maybe<Array<Scalars['String']>>;
-  countries?: Maybe<Array<Scalars['String']>>;
-  locations?: Maybe<Array<Scalars['String']>>;
-  specializations?: Maybe<Array<Scalars['String']>>;
-  salaryFrom?: Maybe<Scalars['Int']>;
-  salaryTo?: Maybe<Scalars['Int']>;
-  timezoneFrom?: Maybe<Scalars['Int']>;
-  timezoneTo?: Maybe<Scalars['Int']>;
-  searchQuery?: Maybe<Scalars['String']>;
-  experienceIds?: Maybe<Array<Scalars['Int']>>;
-  englishLevelIds?: Maybe<Array<Scalars['Int']>>;
-  employmentTypesIds?: Maybe<Array<Scalars['Int']>>;
-  technologiesIds?: Maybe<Array<Scalars['Int']>>;
-  timezoneReverseMode?: Maybe<Scalars['Boolean']>;
-};
-
-export type CandidateProfileCityInput = {
-  cityId: Scalars['String'];
-  cityName: Scalars['String'];
-  cityTimezone?: Maybe<Scalars['Int']>;
-  cityCountrySlug?: Maybe<Scalars['String']>;
-  cityCountryName?: Maybe<Scalars['String']>;
-  type?: Maybe<CityTypes>;
-};
-
-export type CandidateProfileCity = {
-  __typename?: 'CandidateProfileCity';
-  id: Scalars['Int'];
-  cityId: Scalars['String'];
-  cityName: Scalars['String'];
-  cityTimezone?: Maybe<Scalars['Int']>;
-  cityCountrySlug?: Maybe<Scalars['String']>;
-  cityCountryName?: Maybe<Scalars['String']>;
-  type: CityTypes;
-};
-
-export enum CityTypes {
-  CandidateCity = 'CANDIDATE_CITY',
-  OfficeCity = 'OFFICE_CITY'
-}
-
-export type UpdateMessageValues = {
-  message: Scalars['String'];
-};
-
-export type ChatMessage = {
-  __typename?: 'ChatMessage';
-  id: Scalars['Int'];
-  message?: Maybe<Scalars['String']>;
-  senderUser?: Maybe<User>;
-  recipientUser?: Maybe<User>;
-  profileConnectionId: Scalars['Int'];
-  isSystemMessage?: Maybe<Scalars['Boolean']>;
-  createdAt: Scalars['GraphQLDateTime'];
-  updatedAt: Scalars['GraphQLDateTime'];
-};
-
-export enum MessageUserRole {
-  Sender = 'SENDER',
-  Recipient = 'RECIPIENT',
-  NotDefined = 'NOT_DEFINED'
-}
-
-
-export enum DevicePlatform {
-  Ios = 'IOS',
-  Android = 'ANDROID'
-}
-
-export type DeviceToken = {
-  __typename?: 'DeviceToken';
-  id: Scalars['Int'];
-  userId: Scalars['Int'];
-  token: Scalars['String'];
-  devicePlatform: DevicePlatform;
-  deviceYear?: Maybe<Scalars['String']>;
-  systemVersion?: Maybe<Scalars['String']>;
-  deviceName?: Maybe<Scalars['String']>;
-};
-
-export type EmploymentLocation = {
-  __typename?: 'EmploymentLocation';
-  id: Scalars['Int'];
-  slug: Scalars['String'];
-};
-
-export type EmploymentType = {
-  __typename?: 'EmploymentType';
-  id: Scalars['Int'];
-  slug: Scalars['String'];
-};
-
-export type EnglishLevel = {
-  __typename?: 'EnglishLevel';
-  id: Scalars['Int'];
-  slug: Scalars['String'];
-};
-
-export type Feature = {
-  __typename?: 'Feature';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  status: FeatureStatus;
-};
-
-export enum FeatureStatus {
-  Enabled = 'ENABLED',
-  Disabled = 'DISABLED'
-}
-
-export type JobExperience = {
-  __typename?: 'JobExperience';
-  id: Scalars['Int'];
-  slug: Scalars['String'];
-};
-
-export type Nft = {
-  __typename?: 'Nft';
-  id: Scalars['Int'];
-  openseaUrl: Scalars['String'];
-  userId?: Maybe<Scalars['Int']>;
-  entity: UploadedFile;
-};
-
-export enum NotificationChannel {
-  Push = 'PUSH'
-}
-
-export enum OAuthProviders {
-  Github = 'GITHUB',
-  Google = 'GOOGLE',
-  Linkedin = 'LINKEDIN',
-  Apple = 'APPLE'
-}
-
-export type OAuthToken = {
-  __typename?: 'OAuthToken';
-  id: Scalars['Int'];
-  providerName: Scalars['String'];
-  providerId: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type ProfileConnection = {
-  __typename?: 'ProfileConnection';
-  id: Scalars['Int'];
-  candidateUser?: Maybe<User>;
-  recruiterUser: User;
-  candidateProfile: CandidateProfile;
-  recruiterProfile: RecruiterProfile;
-  initiator: ProfileConnectionInitiator;
-  status: ProfileConnectionStatus;
-  chatMessages?: Maybe<Array<ChatMessage>>;
-  candidateReportedStatus?: Maybe<OfferStatus>;
-  recruiterReportedStatus?: Maybe<OfferStatus>;
-  userMeta?: Maybe<ProfileConnectionUserMeta>;
-  buddyMeta?: Maybe<ProfileConnectionUserMeta>;
-  candidateReportedAt?: Maybe<Scalars['GraphQLDateTime']>;
-  recruiterReportedAt?: Maybe<Scalars['GraphQLDateTime']>;
-  unreadMessagesCount?: Maybe<Scalars['Int']>;
-  paidAt?: Maybe<Scalars['GraphQLDateTime']>;
-  isPaymentRequested: Scalars['Boolean'];
-};
-
-export enum ProfileConnectionInitiator {
-  Candidate = 'CANDIDATE',
-  Recruiter = 'RECRUITER'
-}
-
-export enum ProfileConnectionStatus {
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Rejected = 'REJECTED'
-}
-
-export enum OfferStatus {
-  Offer = 'OFFER',
-  NoOffer = 'NO_OFFER'
-}
-
-export type ProfileConnectionUserMeta = {
-  __typename?: 'ProfileConnectionUserMeta';
-  id: Scalars['Int'];
-  lastActionTime?: Maybe<Scalars['GraphQLDateTime']>;
-  archivedAt?: Maybe<Scalars['GraphQLDateTime']>;
-};
-
-export enum RecruiterProfileStatus {
-  Draft = 'DRAFT',
-  OnReview = 'ON_REVIEW',
-  Rejected = 'REJECTED',
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
-}
-
 export type RecruiterProfile = {
   __typename?: 'RecruiterProfile';
   id: Scalars['Int'];
@@ -998,6 +1050,7 @@ export type RecruiterProfile = {
   lastActionTime?: Maybe<Scalars['GraphQLDateTime']>;
   statusesNotificationSentAt?: Maybe<Scalars['GraphQLDateTime']>;
   activeConnectionWithCandidate?: Maybe<ProfileConnection>;
+  city?: Maybe<Scalars['String']>;
 };
 
 
@@ -1005,9 +1058,31 @@ export type RecruiterProfileActiveConnectionWithCandidateArgs = {
   candidateProfileId: Scalars['Int'];
 };
 
+export enum RecruiterProfileStatus {
+  Draft = 'DRAFT',
+  OnReview = 'ON_REVIEW',
+  Rejected = 'REJECTED',
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
 export type ReportOfferStatusValues = {
   profileConnectionId: Scalars['Int'];
   status: OfferStatus;
+};
+
+export type SourcedVacancy = {
+  sourceId: Scalars['Int'];
+  userId: Scalars['Int'];
+  applyLink: Scalars['String'];
+  jobTitle: Scalars['String'];
+  jobDescription: Scalars['String'];
+  jobType: VacancyType;
+  jobCategory: VacancyCategory;
+  status: VacancyStatus;
+  companyName: Scalars['String'];
+  salaryFrom?: Maybe<Scalars['Float']>;
+  salaryTo?: Maybe<Scalars['Float']>;
 };
 
 export type Specialization = {
@@ -1016,11 +1091,48 @@ export type Specialization = {
   name: Scalars['String'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  candidateProfileStatusUpdated: CandidateProfile;
+  newMessage?: Maybe<ChatMessage>;
+  profileConnectionUpdated: ProfileConnection;
+  recruiterProfileStatusUpdated: RecruiterProfile;
+  userUnreadMessagesCountUpdated?: Maybe<User>;
+};
+
+export type SubscriptionStringifiedParams = {
+  __typename?: 'SubscriptionStringifiedParams';
+  id: Scalars['Int'];
+  employmentTypes?: Maybe<Array<EmploymentType>>;
+  technologies?: Maybe<Array<Technology>>;
+  jobExperiences?: Maybe<Array<JobExperience>>;
+  englishLevels?: Maybe<Array<EnglishLevel>>;
+};
+
 export type Technology = {
   __typename?: 'Technology';
   id: Scalars['Int'];
   name: Scalars['String'];
 };
+
+export type UpdateAdminSettingsValues = {
+  contactsVisibilityPermission: Scalars['Boolean'];
+  silentProfileUpdate: Scalars['Boolean'];
+};
+
+export type UpdateMessageValues = {
+  message: Scalars['String'];
+};
+
+export type UpdateSubscriptionsTitleValues = {
+  title: Scalars['String'];
+};
+
+export type UpdateTemplateMessageValues = {
+  messageTitle?: Maybe<Scalars['String']>;
+  messageBody?: Maybe<Scalars['String']>;
+};
+
 
 export type UploadedFile = {
   __typename?: 'UploadedFile';
@@ -1028,28 +1140,6 @@ export type UploadedFile = {
   name: Scalars['String'];
   mime: Scalars['String'];
   url: Scalars['String'];
-};
-
-export enum PrimaryProfile {
-  Recruiter = 'RECRUITER',
-  Candidate = 'CANDIDATE',
-  NotDefined = 'NOT_DEFINED'
-}
-
-export enum UserRole {
-  User = 'USER',
-  Admin = 'ADMIN'
-}
-
-export type ChurnedUser = {
-  __typename?: 'ChurnedUser';
-  id: Scalars['Int'];
-  firstName?: Maybe<Scalars['String']>;
-  email: Scalars['String'];
-  profilesCount: Scalars['Int'];
-  profileId: Scalars['Int'];
-  slug?: Maybe<Scalars['String']>;
-  profileCreatedAt: Scalars['GraphQLDateTime'];
 };
 
 export type User = {
@@ -1115,6 +1205,18 @@ export type UserProfileConnectionsArgs = {
   archived?: Maybe<Scalars['Boolean']>;
 };
 
+export enum UserRole {
+  User = 'USER',
+  Admin = 'ADMIN'
+}
+
+export type UserSettings = {
+  __typename?: 'UserSettings';
+  id: Scalars['Int'];
+  userId: Scalars['Int'];
+  pushNotificationsPermission: Scalars['Boolean'];
+};
+
 export type UserTemplateMessage = {
   __typename?: 'UserTemplateMessage';
   id: Scalars['Int'];
@@ -1122,18 +1224,6 @@ export type UserTemplateMessage = {
   messageTitle: Scalars['String'];
   messageBody: Scalars['String'];
   createdAt?: Maybe<Scalars['GraphQLDateTime']>;
-};
-
-export type UpdateTemplateMessageValues = {
-  messageTitle?: Maybe<Scalars['String']>;
-  messageBody?: Maybe<Scalars['String']>;
-};
-
-export type UserSettings = {
-  __typename?: 'UserSettings';
-  id: Scalars['Int'];
-  userId: Scalars['Int'];
-  pushNotificationsPermission: Scalars['Boolean'];
 };
 
 export type UsersSearchSubscription = {
@@ -1149,40 +1239,19 @@ export type UsersSearchSubscription = {
   subscriptionUrl: Scalars['String'];
 };
 
-export type UpdateSubscriptionsTitleValues = {
-  title: Scalars['String'];
+export type VacanciesByCompanyParameters = {
+  companyName: Scalars['String'];
 };
 
-export type SubscriptionStringifiedParams = {
-  __typename?: 'SubscriptionStringifiedParams';
-  id: Scalars['Int'];
-  employmentTypes?: Maybe<Array<EmploymentType>>;
-  technologies?: Maybe<Array<Technology>>;
-  jobExperiences?: Maybe<Array<JobExperience>>;
-  englishLevels?: Maybe<Array<EnglishLevel>>;
+export type VacanciesParameters = {
+  keywords?: Maybe<Array<Scalars['String']>>;
 };
 
-export type CandidatesSearchParams = {
-  __typename?: 'CandidatesSearchParams';
-  cities?: Maybe<Array<Scalars['String']>>;
-  countries?: Maybe<Array<Scalars['String']>>;
-  specializations?: Maybe<Array<Scalars['String']>>;
-  salaryFrom?: Maybe<Scalars['Int']>;
-  salaryTo?: Maybe<Scalars['Int']>;
-  timezoneFrom?: Maybe<Scalars['Int']>;
-  timezoneTo?: Maybe<Scalars['Int']>;
-  timezoneReverseMode?: Maybe<Scalars['Boolean']>;
-  searchQuery?: Maybe<Scalars['String']>;
-  experienceIds?: Maybe<Array<Scalars['Int']>>;
-  englishLevelIds?: Maybe<Array<Scalars['Int']>>;
-  employmentTypesIds?: Maybe<Array<Scalars['Int']>>;
-  technologiesIds?: Maybe<Array<Scalars['Int']>>;
+export type VacanciesResult = {
+  __typename?: 'VacanciesResult';
+  rows: Array<Vacancy>;
+  hasMore: Scalars['Boolean'];
 };
-
-export enum VacancySourceType {
-  Lever = 'LEVER',
-  Greenhouse = 'GREENHOUSE'
-}
 
 export type VacanciesSource = {
   __typename?: 'VacanciesSource';
@@ -1192,71 +1261,6 @@ export type VacanciesSource = {
   createdAt: Scalars['GraphQLDateTime'];
   deletedAt?: Maybe<Scalars['GraphQLDateTime']>;
 };
-
-export type CreateMultipleVacanciesSourcesParameters = {
-  atsIds: Scalars['String'];
-  companyNames: Scalars['String'];
-  salaryRanges: Scalars['String'];
-  type: VacancySourceType;
-};
-
-export type VacanciesResult = {
-  __typename?: 'VacanciesResult';
-  rows: Array<Vacancy>;
-  hasMore: Scalars['Boolean'];
-};
-
-export enum VacancyStatus {
-  Active = 'ACTIVE',
-  Inactive = 'INACTIVE'
-}
-
-export enum VacancyType {
-  FullTime = 'FULL_TIME',
-  PartTime = 'PART_TIME'
-}
-
-export type VacancySalaryData = {
-  __typename?: 'VacancySalaryData';
-  maxSalary: Scalars['Int'];
-  averageMinSalary: Scalars['Int'];
-  averageSalary: Scalars['Int'];
-};
-
-export type VacancyData = {
-  __typename?: 'VacancyData';
-  vacancies: Array<Vacancy>;
-  salaryData: VacancySalaryData;
-  hasMore: Scalars['Boolean'];
-};
-
-export type VacanciesParameters = {
-  keywords?: Maybe<Array<Scalars['String']>>;
-};
-
-export type VacanciesByCompanyParameters = {
-  companyName: Scalars['String'];
-};
-
-export type SourcedVacancy = {
-  sourceId: Scalars['Int'];
-  userId: Scalars['Int'];
-  applyLink: Scalars['String'];
-  jobTitle: Scalars['String'];
-  jobDescription: Scalars['String'];
-  jobType: VacancyType;
-  jobCategory: VacancyCategory;
-  status: VacancyStatus;
-  companyName: Scalars['String'];
-  salaryFrom?: Maybe<Scalars['Float']>;
-  salaryTo?: Maybe<Scalars['Float']>;
-};
-
-export enum VacancyCategory {
-  UsOnly = 'US_ONLY',
-  EuropeOnly = 'EUROPE_ONLY',
-  Worldwide = 'WORLDWIDE'
-}
 
 export type Vacancy = {
   __typename?: 'Vacancy';
@@ -1282,38 +1286,40 @@ export type Vacancy = {
   applyLink?: Maybe<Scalars['String']>;
 };
 
-export type CandidateProfileWorkPlace = {
-  __typename?: 'CandidateProfileWorkPlace';
-  id: Scalars['Int'];
-  companyName: Scalars['String'];
-  companyUrl?: Maybe<Scalars['String']>;
-  companySizeFrom?: Maybe<Scalars['Int']>;
-  companySizeTo?: Maybe<Scalars['Int']>;
-  companyIndustry?: Maybe<Scalars['String']>;
-  companyCategories?: Maybe<Scalars['String']>;
-  companySpecialities?: Maybe<Scalars['String']>;
-  companyFundingType?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  startDate: Scalars['GraphQLDateTime'];
-  endDate?: Maybe<Scalars['GraphQLDateTime']>;
+export enum VacancyCategory {
+  UsOnly = 'US_ONLY',
+  EuropeOnly = 'EUROPE_ONLY',
+  Worldwide = 'WORLDWIDE'
+}
+
+export type VacancyData = {
+  __typename?: 'VacancyData';
+  vacancies: Array<Vacancy>;
+  salaryData: VacancySalaryData;
+  hasMore: Scalars['Boolean'];
 };
 
-export type CandidateProfileWorkPlaceInput = {
-  companyName: Scalars['String'];
-  companyUrl?: Maybe<Scalars['String']>;
-  companySizeFrom?: Maybe<Scalars['Int']>;
-  companySizeTo?: Maybe<Scalars['Int']>;
-  companyIndustry?: Maybe<Scalars['String']>;
-  companyCategories?: Maybe<Scalars['String']>;
-  companySpecialities?: Maybe<Scalars['String']>;
-  companyFundingType?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
-  description?: Maybe<Scalars['String']>;
-  startDate: Scalars['GraphQLDateTime'];
-  endDate?: Maybe<Scalars['GraphQLDateTime']>;
+export type VacancySalaryData = {
+  __typename?: 'VacancySalaryData';
+  maxSalary: Scalars['Int'];
+  averageMinSalary: Scalars['Int'];
+  averageSalary: Scalars['Int'];
 };
 
+export enum VacancySourceType {
+  Lever = 'LEVER',
+  Greenhouse = 'GREENHOUSE'
+}
+
+export enum VacancyStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
+export enum VacancyType {
+  FullTime = 'FULL_TIME',
+  PartTime = 'PART_TIME'
+}
 
 export type CandidateProfileFullFragment = (
   { __typename?: 'CandidateProfile' }
@@ -1436,14 +1442,14 @@ export type UpdateCandidateProfileMutationVariables = Exact<{
   experienceDescription?: Maybe<Scalars['String']>;
   workExpectations?: Maybe<Scalars['String']>;
   achievements?: Maybe<Scalars['String']>;
-  technologiesIds?: Maybe<Array<Scalars['Int']>>;
+  technologiesIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   jobExperienceId?: Maybe<Scalars['Int']>;
-  employmentTypesIds?: Maybe<Array<Scalars['Int']>>;
-  employmentLocationsIds?: Maybe<Array<Scalars['Int']>>;
+  employmentTypesIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  employmentLocationsIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
   englishLevelId?: Maybe<Scalars['Int']>;
   specializationId?: Maybe<Scalars['Int']>;
-  specializationsIds?: Maybe<Array<Scalars['Int']>>;
-  cities?: Maybe<Array<CandidateProfileCityInput>>;
+  specializationsIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
+  cities?: Maybe<Array<CandidateProfileCityInput> | CandidateProfileCityInput>;
 }>;
 
 
@@ -1549,7 +1555,7 @@ export type JobExperienceBaseFragment = (
 
 export type RecruiterProfileBaseFragment = (
   { __typename?: 'RecruiterProfile' }
-  & Pick<RecruiterProfile, 'id' | 'status' | 'rejectReason' | 'position' | 'companyName' | 'slug' | 'lastActionTime'>
+  & Pick<RecruiterProfile, 'id' | 'status' | 'rejectReason' | 'position' | 'companyName' | 'slug' | 'lastActionTime' | 'city'>
 );
 
 export type RecruiterProfileFullFragment = (
@@ -1606,6 +1612,7 @@ export type SendRecruiterProfileToReviewMutation = (
 export type UpdateRecruiterProfileMutationVariables = Exact<{
   position?: Maybe<Scalars['String']>;
   companyName?: Maybe<Scalars['String']>;
+  city?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1925,7 +1932,7 @@ export type UnsubscribeFromCandidatesSearchMutation = (
 );
 
 export type UpdateSubscriptionLastNotifiedMutationVariables = Exact<{
-  subscriptionsIds?: Maybe<Array<Scalars['Int']>>;
+  subscriptionsIds?: Maybe<Array<Scalars['Int']> | Scalars['Int']>;
 }>;
 
 
@@ -2171,6 +2178,7 @@ export const RecruiterProfileBaseFragmentDoc = gql`
   companyName
   slug
   lastActionTime
+  city
 }
     `;
 export const RecruiterProfileUserFragmentDoc = gql`
@@ -2297,14 +2305,35 @@ export const SendCandidateProfileToReviewDocument = gql`
     ${CandidateProfileBaseFragmentDoc}`;
 export const UpdateCandidateProfileDocument = gql`
     mutation updateCandidateProfile($position: String, $salary: Float, $candidateDescription: String, $experienceDescription: String, $workExpectations: String, $achievements: String, $technologiesIds: [Int!], $jobExperienceId: Int, $employmentTypesIds: [Int!], $employmentLocationsIds: [Int!], $englishLevelId: Int, $specializationId: Int, $specializationsIds: [Int!], $cities: [CandidateProfileCityInput!]) {
-  updateCandidateProfile(position: $position, salary: $salary, candidateDescription: $candidateDescription, experienceDescription: $experienceDescription, workExpectations: $workExpectations, achievements: $achievements, technologiesIds: $technologiesIds, jobExperienceId: $jobExperienceId, employmentTypesIds: $employmentTypesIds, employmentLocationsIds: $employmentLocationsIds, englishLevelId: $englishLevelId, specializationId: $specializationId, specializationsIds: $specializationsIds, cities: $cities) {
+  updateCandidateProfile(
+    position: $position
+    salary: $salary
+    candidateDescription: $candidateDescription
+    experienceDescription: $experienceDescription
+    workExpectations: $workExpectations
+    achievements: $achievements
+    technologiesIds: $technologiesIds
+    jobExperienceId: $jobExperienceId
+    employmentTypesIds: $employmentTypesIds
+    employmentLocationsIds: $employmentLocationsIds
+    englishLevelId: $englishLevelId
+    specializationId: $specializationId
+    specializationsIds: $specializationsIds
+    cities: $cities
+  ) {
     ...CandidateProfileBase
   }
 }
     ${CandidateProfileBaseFragmentDoc}`;
 export const RegisterDeviceDocument = gql`
     mutation registerDevice($token: String!, $devicePlatform: DevicePlatform!, $deviceYear: String, $systemVersion: String, $deviceName: String) {
-  registerDevice(token: $token, devicePlatform: $devicePlatform, deviceYear: $deviceYear, systemVersion: $systemVersion, deviceName: $deviceName) {
+  registerDevice(
+    token: $token
+    devicePlatform: $devicePlatform
+    deviceYear: $deviceYear
+    systemVersion: $systemVersion
+    deviceName: $deviceName
+  ) {
     ...DeviceTokenBase
     ...DeviceTokenExtra
   }
@@ -2353,8 +2382,12 @@ export const SendRecruiterProfileToReviewDocument = gql`
 }
     ${RecruiterProfileBaseFragmentDoc}`;
 export const UpdateRecruiterProfileDocument = gql`
-    mutation updateRecruiterProfile($position: String, $companyName: String) {
-  updateRecruiterProfile(position: $position, companyName: $companyName) {
+    mutation updateRecruiterProfile($position: String, $companyName: String, $city: String) {
+  updateRecruiterProfile(
+    position: $position
+    companyName: $companyName
+    city: $city
+  ) {
     ...RecruiterProfileBase
   }
 }
@@ -2389,7 +2422,11 @@ export const LogOutDocument = gql`
     `;
 export const ResetPasswordDocument = gql`
     mutation resetPassword($token: String!, $password: String!, $repeatPassword: String!) {
-  resetPassword(token: $token, password: $password, repeatPassword: $repeatPassword)
+  resetPassword(
+    token: $token
+    password: $password
+    repeatPassword: $repeatPassword
+  )
 }
     `;
 export const SendConfirmEmailLinkDocument = gql`
@@ -2410,7 +2447,30 @@ ${UserPrimaryProfileFragmentDoc}
 ${UserEngagementFieldsFragmentDoc}`;
 export const SignUpDocument = gql`
     mutation signUp($email: String!, $phone: String, $password: String!, $repeatPassword: String!, $firstName: String, $lastName: String, $fvType: String, $fvSource: String, $fvMedium: String, $fvCampaign: String, $fvContent: String, $fvTerm: String, $lvType: String, $lvSource: String, $lvMedium: String, $lvCampaign: String, $lvContent: String, $lvTerm: String, $gClientid: String, $gIp: String, $gAgent: String, $gclid: String) {
-  signUp(email: $email, phone: $phone, password: $password, repeatPassword: $repeatPassword, firstName: $firstName, lastName: $lastName, fvType: $fvType, fvSource: $fvSource, fvMedium: $fvMedium, fvCampaign: $fvCampaign, fvContent: $fvContent, fvTerm: $fvTerm, lvType: $lvType, lvSource: $lvSource, lvMedium: $lvMedium, lvCampaign: $lvCampaign, lvContent: $lvContent, lvTerm: $lvTerm, gClientid: $gClientid, gIp: $gIp, gAgent: $gAgent, gclid: $gclid) {
+  signUp(
+    email: $email
+    phone: $phone
+    password: $password
+    repeatPassword: $repeatPassword
+    firstName: $firstName
+    lastName: $lastName
+    fvType: $fvType
+    fvSource: $fvSource
+    fvMedium: $fvMedium
+    fvCampaign: $fvCampaign
+    fvContent: $fvContent
+    fvTerm: $fvTerm
+    lvType: $lvType
+    lvSource: $lvSource
+    lvMedium: $lvMedium
+    lvCampaign: $lvCampaign
+    lvContent: $lvContent
+    lvTerm: $lvTerm
+    gClientid: $gClientid
+    gIp: $gIp
+    gAgent: $gAgent
+    gclid: $gclid
+  ) {
     ...UserBase
     ...UserPrimaryProfile
     ...UserEngagementFields
@@ -2421,7 +2481,31 @@ ${UserPrimaryProfileFragmentDoc}
 ${UserEngagementFieldsFragmentDoc}`;
 export const SignUpAsInactiveUserDocument = gql`
     mutation signUpAsInactiveUser($username: String!, $email: String!, $phone: String, $password: String!, $repeatPassword: String!, $firstName: String, $lastName: String, $fvType: String, $fvSource: String, $fvMedium: String, $fvCampaign: String, $fvContent: String, $fvTerm: String, $lvType: String, $lvSource: String, $lvMedium: String, $lvCampaign: String, $lvContent: String, $lvTerm: String, $gClientid: String, $gIp: String, $gAgent: String, $gclid: String) {
-  signUpAsInactiveUser(username: $username, email: $email, phone: $phone, password: $password, repeatPassword: $repeatPassword, firstName: $firstName, lastName: $lastName, fvType: $fvType, fvSource: $fvSource, fvMedium: $fvMedium, fvCampaign: $fvCampaign, fvContent: $fvContent, fvTerm: $fvTerm, lvType: $lvType, lvSource: $lvSource, lvMedium: $lvMedium, lvCampaign: $lvCampaign, lvContent: $lvContent, lvTerm: $lvTerm, gClientid: $gClientid, gIp: $gIp, gAgent: $gAgent, gclid: $gclid) {
+  signUpAsInactiveUser(
+    username: $username
+    email: $email
+    phone: $phone
+    password: $password
+    repeatPassword: $repeatPassword
+    firstName: $firstName
+    lastName: $lastName
+    fvType: $fvType
+    fvSource: $fvSource
+    fvMedium: $fvMedium
+    fvCampaign: $fvCampaign
+    fvContent: $fvContent
+    fvTerm: $fvTerm
+    lvType: $lvType
+    lvSource: $lvSource
+    lvMedium: $lvMedium
+    lvCampaign: $lvCampaign
+    lvContent: $lvContent
+    lvTerm: $lvTerm
+    gClientid: $gClientid
+    gIp: $gIp
+    gAgent: $gAgent
+    gclid: $gclid
+  ) {
     ...UserBase
     ...UserPrimaryProfile
     ...UserEngagementFields
@@ -2456,7 +2540,11 @@ export const UpdateUserSettingsDocument = gql`
     ${UserSettingsBaseFragmentDoc}`;
 export const SubscribeToCandidatesSearchDocument = gql`
     mutation subscribeToCandidatesSearch($title: String!, $userId: Int, $searchParams: PublicProfilesParameters!) {
-  subscribeToCandidatesSearch(title: $title, userId: $userId, searchParams: $searchParams) {
+  subscribeToCandidatesSearch(
+    title: $title
+    userId: $userId
+    searchParams: $searchParams
+  ) {
     ...UsersSearchSubscriptionBase
     ...UsersSearchSubscriptionParams
   }

@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
 import { RecruiterProfile } from '@/controllers/graphql/generated';
 import { getFilledValue } from '@/lib/getFilledValue';
+import { useMemo } from 'react';
 import { RecruiterProfileMetaItems } from '../recruiterProfile.typedefs';
 
 export interface MetaItem {
@@ -28,6 +28,10 @@ export const useRecruiterProfileMetaItems: UseRecruiterProfileMetaItems = (
         name: RecruiterProfileMetaItems.CompanyName,
         text: getFilledValue(profile.companyName),
       },
+      ...(profile.city ? [{
+        name: RecruiterProfileMetaItems.City,
+        text: getFilledValue(profile.city),
+      }] : []),
     ];
   },
   [profile],

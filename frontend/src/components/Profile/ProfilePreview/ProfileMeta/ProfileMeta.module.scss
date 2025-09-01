@@ -2,8 +2,8 @@
 
 .metaWrapper {
   @include icon-styles {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     margin-right: rem-calc(4);
     color: $c-semidark-chocolate;
   }
@@ -25,7 +25,6 @@
   align-items: center;
 
   &:last-child {
-
     .divider {
       display: none;
     }
@@ -38,10 +37,9 @@
   @include text-truncate;
 
   &:not(:last-child) {
-
     &::after {
       margin: rem-calc(0 24);
-      content: '|';
+      content: "|";
     }
   }
 }

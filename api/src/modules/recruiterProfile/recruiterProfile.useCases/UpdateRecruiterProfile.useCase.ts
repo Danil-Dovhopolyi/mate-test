@@ -1,12 +1,13 @@
-import { ValidationRules } from '@mate-academy/core';
-import { RecruiterProfile } from '@/models/RecruiterProfile';
 import { AuthUseCase } from '@/core';
-import { RecruiterProfileStatusEnum } from '@/modules/recruiterProfile/recruiterProfile.typedefs';
+import { RecruiterProfile } from '@/models/RecruiterProfile';
 import { RecruiterProfileEntity } from '@/modules/recruiterProfile/RecruiterProfile.entity';
+import { RecruiterProfileStatusEnum } from '@/modules/recruiterProfile/recruiterProfile.typedefs';
+import { ValidationRules } from '@mate-academy/core';
 
 export interface UpdateRecruiterProfileUseCaseOptions {
   position: string
   companyName: string
+  city?: string
 }
 export type UpdateRecruiterProfileUseCaseResult = RecruiterProfile;
 
@@ -20,6 +21,7 @@ export class UpdateRecruiterProfileUseCase extends AuthUseCase<
     return {
       position: ['required', 'string'],
       companyName: ['required', 'string'],
+      city: ['string', { name: 'max', params: [255] }],
     };
   }
 
